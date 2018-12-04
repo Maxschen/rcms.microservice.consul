@@ -146,3 +146,40 @@ consul members   #查看consul cluster中的每一个consul节点的信息
   * consul: New leader elected: 192.168.1.235
 
   * 证明此时leader已经选出，集群可以正常工作
+
+集群状态查看
+
+* consul operator raft list-peers
+  * 192.168.1.235  192.168.1.235:8300  192.168.1.235:8300  leader   true   2
+
+  * 192.168.1.185  192.168.1.185:8300  192.168.1.185:8300  follower true   2
+
+  * 192.168.3.152  192.168.3.152:8300  192.168.3.152:8300  follower true   2
+
+可以看出集群中192.168.1.235是leader，192.168.1.185和192.168.3.152都是follower
+
+集群参数get/set测试
+
+* 192.168.1.185set/get参数
+  * consul kv put key value
+
+  * Success! Data written to: key
+
+  * consul kv get key
+
+  * value
+
+在192.168.1.185可以正常设置key的值为value，并能正常查回来
+
+* 192.168.1.235get key的值
+  * consul kv get key
+
+  * value
+
+* 192.168.3.152get key的值
+
+  * consul kv get key
+
+  * value
+
+三台机器获取key的值均为value，如此可知key的值已经在集群中同步
