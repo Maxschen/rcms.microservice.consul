@@ -100,8 +100,8 @@ consul members   #查看consul cluster中的每一个consul节点的信息
 1. 这样一个简单的Consul集群就搭建完成了，在node1上查看当前集群节点：
 * consul members -rpc-addr=192.168.11.143:8400
 
-   结果如下：
-* node0  192.168.11.143:8301  alive   server  0.7.0   2         dc1
-* node1  192.168.11.144:8301  alive   client  0.7.0   2         dc1
-* node2  192.168.11.145:8301  alive   client  0.7.0   2         dc1
+    结果如下：
+     * node0  192.168.11.143:8301  alive   server  0.7.0   2         dc1
+     * node1  192.168.11.144:8301  alive   client  0.7.0   2         dc1
+     * node2  192.168.11.145:8301  alive   client  0.7.0   2         dc1
 
