@@ -1,2 +1,4 @@
 
-Consul 简介、安装、常用命令的使用
+3 Consul 启动
+
+  执行命令 ./consul agent -dev           # -dev表示开发模式运行，另外还有-server表示服务模式运行
