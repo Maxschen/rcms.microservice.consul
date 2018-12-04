@@ -1,5 +1,3 @@
-# Consul 简介、安装、常用命令的使用
-
 ## 1 Consul简介
 
 Consul 是 HashiCorp 公司推出的开源工具，用于实现分布式系统的服务发现与配置。与其他分布式服务注册与发现的方案，Consul的方案更“一站式”，内置了服务注册与发现框 架、分布一致性协议实现、健康检查、Key/Value存储、多数据中心方案，不再需要依赖其他工具（比如ZooKeeper等）。使用起来也较 为简单。Consul使用Go语言编写，因此具有天然可移植性(支持Linux、windows和Mac OS X)；安装包仅包含一个可执行文件，方便部署，与Docker等轻量级容器可无缝配合 。
@@ -78,6 +76,7 @@ consul members   #查看consul cluster中的每一个consul节点的信息
 * -datacenter（老版本叫-dc，-dc已经失效） 
    * 作用：指定机器加入到哪一个数据中心中
 
+
 ## 6 Consul 的高可用
 
 这边准备了三台CentOS 7的虚拟机，主机规划如下，供参考：
@@ -86,7 +85,7 @@ consul members   #查看consul cluster中的每一个consul节点的信息
 * node0	192.168.11.143	consul server	是
 * node1	192.168.11.144	consul client	否
 * node2	192.168.11.145	consul client	是
-### 搭建步骤
+### 搭建步骤方法1
 1. 启动node0机器上的Consul（node0机器上执行）：
 * consul agent -data-dir /tmp/node0 -node=node0 -bind=192.168.11.143 -datacenter=dc1 -ui -client=192.168.11.143 -server -bootstrap-expect 1
 1. 启动node1机器上的Consul（node1机器上执行）：
@@ -105,3 +104,45 @@ consul members   #查看consul cluster中的每一个consul节点的信息
      * node1  192.168.11.144:8301  alive   client  0.7.0   2         dc1
      * node2  192.168.11.145:8301  alive   client  0.7.0   2         dc1
 
+
+### 搭建步骤方法2
+
+* 192.168.1.185启动consul
+
+  * consul agent -server -bootstrap-expect 3 -data-dir /tmp/consul -node 192.168.1.185-datacenter huanan –ui
+
+* 192.168.3.152启动consul
+
+  * consul agent -server -bootstrap-expect 3 -data-dir /tmp/consul -node 192.168.3.152-datacenter huanan –ui
+
+* 192.168.1.235启动consul
+
+  * consul agent -server -bootstrap-expect 3 -data-dir /tmp/consul -node 192.168.1.235-datacenter huanan -ui
+
+* 此时三台机器都会打印：
+
+  * 2017/09/07 14:54:26 [WARN] raft: no knownpeers, aborting election
+
+  * 2017/09/07 14:54:26 [ERR] agent: failed tosync remote state: No cluster leader
+
+  * 此时三台机器还未join，不能算是一个集群，三台机器上的consul均不能正常工作，因为leader未选出
+
+三台机器组成consul集群
+
+* 192.168.3.152加入192.168.1.185
+
+  * consul join 192.168.1.185
+
+  * Successfully joined cluster by contacting 1nodes.
+
+* 192.168.1.235加入192.168.1.185
+
+  * consul join 192.168.1.185
+
+  * Successfully joined cluster by contacting 1nodes.
+
+* 很快三台机器都会打印：
+
+  * consul: New leader elected: 192.168.1.235
+
+  * 证明此时leader已经选出，集群可以正常工作
